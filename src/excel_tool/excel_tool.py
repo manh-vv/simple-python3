@@ -2,20 +2,27 @@ from openpyxl import load_workbook
 from slugify import slugify
 from shutil import copyfile
 
-wb = load_workbook(filename='input/data_book.xlsx', data_only=True)
-sheet_ranges = wb['Sheet1']
+# noinspection PyUnresolvedReferences
+from excel_tool_helper import month_to_num
 
-# our data range is: A6, Y6749
+resource_folder = '../resources'
+input_folder = f'{resource_folder}/input'
+output_folder = f'{resource_folder}/output'
+
+wb = load_workbook(filename=f'{input_folder}/data_book.xlsx', data_only=True)
+sheet_ranges = wb['Sheet3']
+
+# our data range is: A 6, Y 8778
 
 # group by SUP name
 sup_group = dict()
 # get column Y, and fill out sup_group by sup_name=[row_num]
-col_sup_name = 'Y'
+col_sup_name = 'Z'
 col_customer_name = 'D'
 col_month_name = 'A'
 
 row_data_start = 6
-row_data_end = 6749
+row_data_end = 100
 
 row_num = 0
 for sup_name_cell in sheet_ranges[col_sup_name]:
@@ -53,7 +60,7 @@ for sup_name_cell in sheet_ranges[col_sup_name]:
         customer_group[customer_name] = [row_num]
 
     # test
-    if row_num == row_data_end:
+    if row_num >= row_data_end:
         break
 
 # validate
@@ -61,6 +68,12 @@ if row_num == row_data_end:
     print('---- reach end -- finish collect and grouping data')
 else:
     print('---- reading data fail: may missing row')
+    raise Exception(f'reading data fail: expected {row_data_end} but get {row_num}')
+
+
+# read incentive and update data in memory
+def read_incentive_and_update_memory_data(memory_data):
+    incentive_wb = load_workbook(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
 
 
 def get_valid_sheet_name(s):
@@ -73,36 +86,24 @@ def get_valid_filename(s):
 
 def create_file_by_sup_name(sup_name, cur_month):
     file_name = get_valid_filename(sup_name)
-    _file = f'output/{file_name}.xlsx'
+    _file = f'{output_folder}/{cur_month}_{file_name}.xlsx'
 
-    if cur_month == 'Jan':
-        m = 1
-    elif cur_month == 'Feb':
-        m = 2
-    elif cur_month == 'Mar':
-        m = 3
-    elif cur_month == 'Apr':
-        m = 4
-    else:
-        print(''.rjust(10, '-'), 'No month num available')
-        return ''
-
-    copyfile(f'input/template{m}.xlsx', _file)
+    copyfile(f'{input_folder}/template1.xlsx', _file)
     return _file
 
 
 read_write_cols = [
     ('B', 'B'),  # Khu Vực
-    ('E', 'C'),  # Tỉnh/Thành
+    ('F', 'C'),  # Tỉnh/Thành
     ('C', 'D'),  # Mã khách hàng
     ('D', 'E'),  # Tên khách hàng
-    ('I', 'F'),  # Số hóa đơn
-    ('R', 'G'),  # Ngày hóa đơn
-    ('P', 'H'),  # Doanh số
-    ('S', 'I')  # Thuế VAT
+    ('S', 'G'),  # Ngày hóa đơn
+    ('Q', 'H'),  # Doanh số
+    ('R', 'I')  # Thuế VAT
 ]
 
 template_sheet_name = 'customer_name'
+sheet_title_col = 'A1'
 
 # available rows in template now is 40
 available_rows = 40
@@ -126,6 +127,9 @@ for sup_name, month_group in sup_group.items():
             # for each customer name create new sheet name from template
             c_sheet = nwb.copy_worksheet(nwb[template_sheet_name])
             c_sheet.title = get_valid_sheet_name(customer_name)
+            # fill value to sheet title
+            c_sheet[
+                sheet_title_col] = f'Bảng kê chi tiết doanh số, chiết khấu thương mại Tháng {month_to_num(cur_month)}.2018'
 
             # then fill related values to the sheet
             # we will fill from row 5

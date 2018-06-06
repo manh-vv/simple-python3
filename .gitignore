@@ -1,5 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-output
+src/resources/output
+src/resources/input
 venv
-input
