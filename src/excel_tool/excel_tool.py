@@ -4,13 +4,17 @@ from shutil import copyfile
 
 # noinspection PyUnresolvedReferences
 from excel_tool_helper import month_to_num
+# noinspection PyUnresolvedReferences
+from read_percent import read_percent
+# noinspection PyUnresolvedReferences
+from read_incentive import read_incentive
 
 resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 output_folder = f'{resource_folder}/output'
 
 wb = load_workbook(filename=f'{input_folder}/data_book.xlsx', data_only=True)
-sheet_ranges = wb['Sheet3']
+sheet_ranges = wb['Sheet1']
 
 # our data range is: A 6, Y 8778
 
@@ -18,11 +22,14 @@ sheet_ranges = wb['Sheet3']
 sup_group = dict()
 # get column Y, and fill out sup_group by sup_name=[row_num]
 col_sup_name = 'Z'
+col_customer_code = 'C'
 col_customer_name = 'D'
 col_month_name = 'A'
 
 row_data_start = 6
-row_data_end = 100
+row_data_end = 8778
+
+customer_code_name_mapping = dict()
 
 row_num = 0
 for sup_name_cell in sheet_ranges[col_sup_name]:
@@ -33,31 +40,25 @@ for sup_name_cell in sheet_ranges[col_sup_name]:
     sup_name = sup_name_cell.value
 
     # read customer name
-    customer_name = sheet_ranges[f'{col_customer_name}{row_num}'].value.strip()
+    customer_code = sheet_ranges[f'{col_customer_code}{row_num}'].value
+    if customer_code not in customer_code_name_mapping:
+        customer_code_name_mapping[customer_code] = sheet_ranges[f'{col_customer_name}{row_num}'].value.strip()
 
     # read month
-    cur_month = sheet_ranges[f'{col_month_name}{row_num}'].value
+    cur_month = str(sheet_ranges[f'{col_month_name}{row_num}'].value).lower()
 
-    if sup_name in sup_group:
-        cur_sup_collection = sup_group[sup_name]
+    if sup_name not in sup_group:
+        sup_group[sup_name] = dict()
 
-        if cur_month in cur_sup_collection:
-            customer_group = cur_sup_collection[cur_month]
-            # check if customer name is in dictionary then add row_num
-            if customer_name in customer_group:
-                customer_group[customer_name].append(row_num)
+    month_group = sup_group[sup_name]
+    if cur_month not in month_group:
+        month_group[cur_month] = dict()
 
-            # else create new key of customer name then add row_num
-            else:
-                customer_group[customer_name] = [row_num]
-        else:
-            customer_group = cur_sup_collection[cur_month] = dict()
-            customer_group[customer_name] = [row_num]
-    else:
-        # create customer dictionary to group customer by name
-        cur_sup_collection = sup_group[sup_name] = dict()
-        customer_group = cur_sup_collection[cur_month] = dict()
-        customer_group[customer_name] = [row_num]
+    customer_group = month_group[cur_month]
+    if customer_code not in customer_group:
+        customer_group[customer_code] = []
+
+    customer_group[customer_code].append(row_num)
 
     # test
     if row_num >= row_data_end:
@@ -70,10 +71,9 @@ else:
     print('---- reading data fail: may missing row')
     raise Exception(f'reading data fail: expected {row_data_end} but get {row_num}')
 
-
 # read incentive and update data in memory
-def read_incentive_and_update_memory_data(memory_data):
-    incentive_wb = load_workbook(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
+incentive_data = read_incentive(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
+month_percent = read_percent(f'{input_folder}/phan tram.xlsx')
 
 
 def get_valid_sheet_name(s):
@@ -92,6 +92,19 @@ def create_file_by_sup_name(sup_name, cur_month):
     return _file
 
 
+def find_percent(_sup_name, _cur_month, _customer_code):
+    if _sup_name not in month_percent:
+        return 0
+
+    if _cur_month not in month_percent[_sup_name]:
+        return 0
+
+    if _customer_code not in month_percent[_sup_name][_cur_month]:
+        return 0
+
+    return month_percent[_sup_name][_cur_month][_customer_code]
+
+
 read_write_cols = [
     ('B', 'B'),  # Khu Vực
     ('F', 'C'),  # Tỉnh/Thành
@@ -104,16 +117,17 @@ read_write_cols = [
 
 template_sheet_name = 'customer_name'
 sheet_title_col = 'A1'
+percent_col = 'G46'
 
 # available rows in template now is 40
 available_rows = 40
 # we need to insert more rows so data can fit in
 
 for sup_name, month_group in sup_group.items():
-    print(sup_name)
+    # print(sup_name)
 
     for cur_month, customer_group in month_group.items():
-        print(''.ljust(5, '-'), ' ', cur_month)
+        # print(''.ljust(5, '-'), ' ', cur_month)
 
         # for each sup_name create new excel file from template
         new_file = create_file_by_sup_name(sup_name, cur_month)
@@ -122,21 +136,22 @@ for sup_name, month_group in sup_group.items():
 
         nwb = load_workbook(filename=new_file)
 
-        for customer_name, row_num_list in customer_group.items():
-            print(''.ljust(10, '-'), ' ', customer_name)
+        for customer_code, row_num_list in customer_group.items():
+            # print(''.ljust(10, '-'), ' ', customer_code)
             # for each customer name create new sheet name from template
             c_sheet = nwb.copy_worksheet(nwb[template_sheet_name])
-            c_sheet.title = get_valid_sheet_name(customer_name)
+            c_sheet.title = get_valid_sheet_name(customer_code_name_mapping[customer_code])
             # fill value to sheet title
-            c_sheet[
-                sheet_title_col] = f'Bảng kê chi tiết doanh số, chiết khấu thương mại Tháng {month_to_num(cur_month)}.2018'
+            month_num = month_to_num(cur_month)
+            c_sheet[sheet_title_col] = f'Bảng kê chi tiết doanh số, chiết khấu thương mại Tháng {month_num}.2018'
+            c_sheet[percent_col] = find_percent(sup_name, cur_month, customer_code)
 
             # then fill related values to the sheet
             # we will fill from row 5
             # need inserting more rows
             will_fill_row_count = len(row_num_list)
             if will_fill_row_count > available_rows:
-                c_sheet.insert_rows(available_rows - 2, will_fill_row_count - available_rows + 2)
+                c_sheet.insert_rows(available_rows - 2, will_fill_row_count - available_rows + 5)
 
             row_index = 5
             for row_num in row_num_list:
@@ -145,7 +160,17 @@ for sup_name, month_group in sup_group.items():
 
                 row_index = row_index + 1
 
-            print(f'---- fill out {row_index - 4}rows')
+            # print(f'---- fill out {row_index - 4}rows')
+
+            # fill incentive data
+            if sup_name in incentive_data\
+                    and cur_month in incentive_data[sup_name]\
+                    and customer_code in incentive_data[sup_name][cur_month]:
+
+                for _icd in incentive_data[sup_name][cur_month][customer_code]:
+                    c_sheet[f'H{row_index}'] = _icd[0]  # doanh so
+                    c_sheet[f'I{row_index}'] = _icd[1]  # thue
+                    row_index = row_index + 1
 
         # remove template sheet
         nwb.remove(nwb[template_sheet_name])
