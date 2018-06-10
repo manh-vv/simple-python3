@@ -2,8 +2,7 @@ from openpyxl import load_workbook
 from slugify import slugify
 from shutil import copyfile
 
-# noinspection PyUnresolvedReferences
-from excel_tool_helper import month_to_num
+from excel_tool.excel_tool_helper import month_to_num
 # noinspection PyUnresolvedReferences
 from read_percent import read_percent
 # noinspection PyUnresolvedReferences

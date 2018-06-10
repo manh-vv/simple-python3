@@ -1,3 +1,20 @@
+from csv import reader
+
+file_path = '/Users/manhvu/mworks/python3/simple-python3/src/resources/input/customer_code.csv'
+csv_file = open(file_path, encoding="utf-8", newline='\n')
+
+customer_code_map = dict()
+spam_reader = reader(csv_file, delimiter=',', quotechar='"')
+for row in spam_reader:
+    customer_code_map[row[0]] = row[1]
+
+csv_file.close()
+
+
+def get_customer_name(customer_code):
+    return customer_code_map[customer_code]
+
+
 def month_to_num(month_name):
     month_name = month_name.lower()
 
@@ -28,7 +45,6 @@ def month_to_num(month_name):
 
     raise Exception(f'month name [{month_name}] not exist')
 
-
 # print("Jan", month_to_num('Jan'))
 # print("JAn", month_to_num('JAn'))
 # print("jaN", month_to_num('jaN'))
@@ -49,4 +65,3 @@ def month_to_num(month_name):
 # print("dec", month_to_num('dec'))
 #
 # print("dec", month_to_num('de'))
-
