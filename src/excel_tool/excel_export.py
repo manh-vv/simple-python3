@@ -41,6 +41,12 @@ def print_data(_c_sheet, _customer_code, _data, _row):
 def export_quarter_inventory(template_name, template_sheet_name, sup_group):
     output_path = ensure_dir(f'{output_folder}/quarter_inventory')
 
+    row_map = {
+        1: 5,
+        2: 6,
+        3: 7
+    }
+
     for sup_name, customer_group in sup_group.items():
         nwb = load_workbook(filename=f'{input_folder}/{template_name}')
 
@@ -50,19 +56,8 @@ def export_quarter_inventory(template_name, template_sheet_name, sup_group):
 
             for cur_month, data in month_group.items():
                 month_num = month_to_num(cur_month)
-                row = 0
-
-                if month_num == 1:
-                    row = 5
-
-                if month_num == 2:
-                    row = 6
-
-                if month_num == 3:
-                    row = 7
-
-                if row != 0:
-                    print_data(c_sheet, customer_code, data, row)
+                if month_num in row_map:
+                    print_data(c_sheet, customer_code, data, row_map[month_num])
 
         # remove template sheet
         nwb.remove(nwb[template_sheet_name])
