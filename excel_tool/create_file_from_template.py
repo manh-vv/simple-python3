@@ -1,6 +1,7 @@
-from slugify import slugify
-from shutil import copyfile
 import os
+from shutil import copyfile
+
+from slugify import slugify
 
 output_folder = f'{os.getcwd()}/resources/output'
 

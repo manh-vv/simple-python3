@@ -1,6 +1,8 @@
+from os import path, makedirs
+
 from openpyxl import load_workbook
 from slugify import slugify
-from os import path, makedirs
+
 from .excel_tool_helper import month_to_num, get_customer_name
 
 input_folder = '/Users/manhvu/mworks/python3/simple-python3/src/resources/input'

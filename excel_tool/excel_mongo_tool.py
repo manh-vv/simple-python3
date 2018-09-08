@@ -1,9 +1,14 @@
-from pymongo import MongoClient
+import urllib.parse
+
 from bson.objectid import ObjectId
-from bson.son import SON
+from pymongo import MongoClient
+
 from excel_tool.excel_read_data_book import read_work_book
 
-client = MongoClient('mongodb://localhost:27017/')
+username = urllib.parse.quote_plus('root')
+password = urllib.parse.quote_plus('manhvu@1')
+
+client = MongoClient('mongodb://%s:%s@localhost:27017/' % (username, password))
 db = client['data_book']
 collection_name = 'excel_data'
 excel_data = db[collection_name]
@@ -12,7 +17,7 @@ excel_data = db[collection_name]
 def quarter_inventory():
     pipeline = [
         {
-            "$sort": {"sup_name": 1, "month": 1, "customer_code": 1}
+            "$sort": {"sup_name": 1, "customer_code": 1, "month": 1}
         },
         {
             "$group": {
@@ -48,6 +53,7 @@ def delete_all():
 
 def worker_excel_mongodb(config):
     if not config['import_new']:
+        print(f'---- check import_new value {config["import_new"]}')
         return
 
     print('erase old data')

@@ -1,0 +1,13 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+.DS_Store
+.dockerignore
+.git
+.gitignore
+.idea
+Dockerfile
+docker-compose.yml
+docker-data
+down.sh
+requirements.txt
+up.sh

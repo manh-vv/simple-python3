@@ -1,7 +1,8 @@
 from csv import reader
 
-file_path = '/Users/manhvu/mworks/python3/simple-python3/src/resources/input/customer_code.csv'
-csv_file = open(file_path, encoding="utf-8", newline='\n')
+from excel_tool.utils import file_input_path
+
+csv_file = open(file_input_path('customer_code.csv'), encoding="utf-8", newline='\n')
 
 customer_code_map = dict()
 spam_reader = reader(csv_file, delimiter=',', quotechar='"')

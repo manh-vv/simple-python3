@@ -3,19 +3,26 @@ from openpyxl import load_workbook
 resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 
+working_months = [
+    ('aug', 'H')
+]
+
 
 # read incentive and update data in memory
-def read_incentive(incentive_file_path):
+#
+# sup_name
+# -------- customer-code -- jan-v -- feb-v ...
+#
+def read_percent(file_path):
     sup_group = dict()
 
-    col_sup_name = 'H'
+    col_sup_name = 'D'
     col_customer_code = 'B'
-    col_month_name = 'A'
 
     row_data_start = 2
-    row_data_end = 44
+    row_data_end = 86
 
-    incentive_wb = load_workbook(incentive_file_path, data_only=True)
+    incentive_wb = load_workbook(file_path, data_only=True)
     sheet_ranges = incentive_wb['Sheet1']
     row_num = 0
 
@@ -30,24 +37,21 @@ def read_incentive(incentive_file_path):
         customer_code = sheet_ranges[f'{col_customer_code}{row_num}'].value
 
         # read month
-        cur_month = str(sheet_ranges[f'{col_month_name}{row_num}'].value).lower()
-
-        # E is `Doanh so`
-        # F is `Thue Vat`
-        data = (sheet_ranges[f'E{row_num}'].value, sheet_ranges[f'F{row_num}'].value)
-
         if sup_name not in sup_group:
             sup_group[sup_name] = dict()
 
-        month_group = sup_group[sup_name]
-        if cur_month not in month_group:
-            month_group[cur_month] = dict()
+        for t in working_months:
+            m = t[0]
+            col = t[1]
+            month_group = sup_group[sup_name]
+            if m not in month_group:
+                month_group[m] = dict()
 
-        customer_group = month_group[cur_month]
-        if customer_code not in customer_group:
-            customer_group[customer_code] = []
+            customer_group = month_group[m]
 
-        customer_group[customer_code].append(data)
+            percent_value = sheet_ranges[f'{col}{row_num}'].value
+            if percent_value is not None:
+                customer_group[customer_code] = percent_value
 
         if row_num >= row_data_end:
             break
@@ -61,7 +65,6 @@ def read_incentive(incentive_file_path):
 
     return sup_group
 
-
-# test incentive
-# rs = read_incentive(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
+# test read percent
+# rs = read_percent(f'{input_folder}/phan tram.xlsx')
 # print('rs', rs)
