@@ -4,3 +4,5 @@ src/resources/output
 src/resources/input
 src/resources/db
 venv
+
+excel-tools/docker-data

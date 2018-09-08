@@ -4,11 +4,7 @@ resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 
 working_months = [
-    ('jan', 'F'),
-    ('feb', 'G'),
-    ('mar', 'H'),
-    ('apr', 'I'),
-    ('may', 'J')
+    ('jun', 'AC')
 ]
 
 
@@ -20,11 +16,11 @@ working_months = [
 def read_percent(file_path):
     sup_group = dict()
 
-    col_sup_name = 'K'
-    col_customer_code = 'A'
+    col_sup_name = 'E'
+    col_customer_code = 'B'
 
     row_data_start = 2
-    row_data_end = 117
+    row_data_end = 86
 
     incentive_wb = load_workbook(file_path, data_only=True)
     sheet_ranges = incentive_wb['Sheet1']

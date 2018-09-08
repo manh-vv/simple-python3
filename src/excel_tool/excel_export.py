@@ -42,9 +42,9 @@ def export_quarter_inventory(template_name, template_sheet_name, sup_group):
     output_path = ensure_dir(f'{output_folder}/quarter_inventory')
 
     row_map = {
-        1: 5,
-        2: 6,
-        3: 7
+        4: 5,
+        5: 6,
+        6: 7
     }
 
     for sup_name, customer_group in sup_group.items():

@@ -9,7 +9,7 @@ def parse_int(s):
 
 
 def read_data(has_header=True):
-    file_path = '/Users/manhvu/mworks/python3/simple-python3/src/resources/input/quater_inventory.csv'
+    file_path = '/Users/manhvu/mworks/python3/simple-python3/src/resources/input/quarter_inventory.csv'
     csv_file = open(file_path, encoding="utf-8", newline='\n')
 
     sup_group = dict()
@@ -52,4 +52,9 @@ def read_data(has_header=True):
 # print out
 def execute_export():
     sup_group = read_data()
+
+    for sup in sup_group.items():
+        print('---- sup = ', sup)
+        break
+
     export_quarter_inventory('quarter_inventory_template.xlsx', 'Sheet1', sup_group)

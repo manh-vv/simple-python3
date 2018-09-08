@@ -2,11 +2,12 @@ from openpyxl import load_workbook
 from slugify import slugify
 from shutil import copyfile
 
-from excel_tool.excel_tool_helper import month_to_num
+# noinspection PyUnresolvedReferences
+from excel_tool_helper import month_to_num
 # noinspection PyUnresolvedReferences
 from read_percent import read_percent
 # noinspection PyUnresolvedReferences
-from read_incentive import read_incentive
+# from read_incentive import read_incentive
 
 resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
@@ -20,13 +21,13 @@ sheet_ranges = wb['Sheet1']
 # group by SUP name
 sup_group = dict()
 # get column Y, and fill out sup_group by sup_name=[row_num]
-col_sup_name = 'Z'
+col_sup_name = 'X'
 col_customer_code = 'C'
 col_customer_name = 'D'
 col_month_name = 'A'
 
 row_data_start = 6
-row_data_end = 8778
+row_data_end = 6079
 
 customer_code_name_mapping = dict()
 
@@ -71,8 +72,8 @@ else:
     raise Exception(f'reading data fail: expected {row_data_end} but get {row_num}')
 
 # read incentive and update data in memory
-incentive_data = read_incentive(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
-month_percent = read_percent(f'{input_folder}/phan tram.xlsx')
+# incentive_data = read_incentive(f'{input_folder}/Incentive 2017 carry FW to 2018.xlsx')
+month_percent = read_percent(f'{input_folder}/phan_tram_2.xlsx')
 
 
 def get_valid_sheet_name(s):
@@ -123,22 +124,23 @@ available_rows = 40
 # we need to insert more rows so data can fit in
 
 for sup_name, month_group in sup_group.items():
-    # print(sup_name)
+    print(sup_name)
 
     for cur_month, customer_group in month_group.items():
-        # print(''.ljust(5, '-'), ' ', cur_month)
+        print(''.ljust(5, '-'), ' ', cur_month)
 
         # for each sup_name create new excel file from template
         new_file = create_file_by_sup_name(sup_name, cur_month)
         if new_file == '':
-            exit(1)
+            raise Exception(f'can not create file for {sup_name} -- {cur_month}')
 
         nwb = load_workbook(filename=new_file)
 
         for customer_code, row_num_list in customer_group.items():
-            # print(''.ljust(10, '-'), ' ', customer_code)
+            print(''.ljust(10, '-'), ' ', customer_code)
             # for each customer name create new sheet name from template
-            c_sheet = nwb.copy_worksheet(nwb[template_sheet_name])
+            work_sheet_source = nwb[template_sheet_name]
+            c_sheet = nwb.copy_worksheet(work_sheet_source)
             c_sheet.title = get_valid_sheet_name(customer_code_name_mapping[customer_code])
             # fill value to sheet title
             month_num = month_to_num(cur_month)
@@ -159,17 +161,17 @@ for sup_name, month_group in sup_group.items():
 
                 row_index = row_index + 1
 
-            # print(f'---- fill out {row_index - 4}rows')
+            print(f'---- fill out {row_index - 4}rows')
 
             # fill incentive data
-            if sup_name in incentive_data\
-                    and cur_month in incentive_data[sup_name]\
-                    and customer_code in incentive_data[sup_name][cur_month]:
-
-                for _icd in incentive_data[sup_name][cur_month][customer_code]:
-                    c_sheet[f'H{row_index}'] = _icd[0]  # doanh so
-                    c_sheet[f'I{row_index}'] = _icd[1]  # thue
-                    row_index = row_index + 1
+            # if sup_name in incentive_data\
+            #         and cur_month in incentive_data[sup_name]\
+            #         and customer_code in incentive_data[sup_name][cur_month]:
+            #
+            #     for _icd in incentive_data[sup_name][cur_month][customer_code]:
+            #         c_sheet[f'H{row_index}'] = _icd[0]  # doanh so
+            #         c_sheet[f'I{row_index}'] = _icd[1]  # thue
+            #         row_index = row_index + 1
 
         # remove template sheet
         nwb.remove(nwb[template_sheet_name])
