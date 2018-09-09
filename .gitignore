@@ -1,8 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-src/resources/output
-src/resources/input
-src/resources/db
+resources
 venv
 
 docker-data
