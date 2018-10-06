@@ -16,7 +16,7 @@ def import_data_to_mongo(import_new=True):
     config = {
         'import_new': import_new,
         'file_path': file_path,
-        'data_range': ('A', 2, 2271),
+        'data_range': ('A', 2, 7377),
         'sheet_name': 'Sheet1',
         'data_col': {
             'month': 'A',

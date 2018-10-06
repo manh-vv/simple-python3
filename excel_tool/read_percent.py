@@ -6,7 +6,7 @@ resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 
 working_months = [
-    ('aug', 'H')
+    ('sep', 'H')
 ]
 
 
@@ -22,7 +22,7 @@ def read_percent(file_path):
     col_customer_code = 'B'
 
     row_data_start = 2
-    row_data_end = 86
+    row_data_end = 87
 
     incentive_wb = load_workbook(file_path, data_only=True)
     sheet_ranges = incentive_wb['Sheet1']
@@ -34,6 +34,7 @@ def read_percent(file_path):
             continue
 
         sup_name = sup_name_cell.value
+        sup_name = sup_name.strip()
 
         # read customer name
         customer_code = sheet_ranges[f'{col_customer_code}{row_num}'].value
@@ -68,7 +69,7 @@ def read_percent(file_path):
     return sup_group
 
 
-month_percent = read_percent(file_input_path('phan_tram.xlsx'))
+month_percent = read_percent(file_input_path('phan_tram_9.xlsx'))
 
 
 def find_percent(_sup_name, _cur_month, _customer_code):
