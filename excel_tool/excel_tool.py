@@ -5,9 +5,7 @@ from slugify import slugify
 
 import excel_tool.utils as utils
 from excel_tool.excel_tool_helper import month_to_num
-from excel_tool.read_percent import read_percent
-
-# from read_incentive import read_incentive
+from excel_tool.read_percent import find_percent
 
 wb = load_workbook(filename=utils.file_input_path('data_book.xlsx'), data_only=True)
 sheet_ranges = wb['Sheet1']
@@ -67,9 +65,9 @@ else:
     print('---- reading data fail: may missing row')
     raise Exception(f'reading data fail: expected {row_data_end} but get {row_num}')
 
+
 # read incentive and update data in memory
 # incentive_data = read_incentive(utils.file_input_path('Incentive 2017 carry FW to 2018.xlsx'))
-month_percent = read_percent(utils.file_input_path('phan_tram.xlsx'))
 
 
 def get_valid_sheet_name(s):
@@ -86,19 +84,6 @@ def create_file_by_sup_name(sup_name, cur_month):
 
     copyfile(utils.file_input_path('template1.xlsx'), _file)
     return _file
-
-
-def find_percent(_sup_name, _cur_month, _customer_code):
-    if _sup_name not in month_percent:
-        return 0
-
-    if _cur_month not in month_percent[_sup_name]:
-        return 0
-
-    if _customer_code not in month_percent[_sup_name][_cur_month]:
-        return 0
-
-    return month_percent[_sup_name][_cur_month][_customer_code]
 
 
 read_write_cols = [

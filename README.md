@@ -38,4 +38,4 @@ NOTE: openpyxl 2.5.3 bug can not copy merge sheet
 
 Dependency guide: https://pip.pypa.io/en/stable/user_guide/#id1
 1. create dependency file: `pip3 freeze > requirements.txt`
-1. install dependencies: `pip install -r requirements.txt`
+1. install dependencies: `pip3 install -r requirements.txt`

@@ -1,49 +1,74 @@
 import excel_tool.excel_mongo_tool as db
-import excel_tool.utils as utils
-import re
-import pprint
 
-sup_name_db = 'c_sup_name'
-c_sup_prefix = 'sup_'
-
+from excel_tool.export_month_stats import export_month_stats
 
 # Group by sup name
+from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db
+
+
 def group_by_sup_name():
     pipeline = [
         {
             "$group": {
-                "_id": "$sup_name",
+                "_id": {
+                    "sup_name": "$sup_name",
+                    "month": "$month",
+                    "customer_code": "$customer_code"
+                },
                 "items": {
                     "$push": "$$CURRENT"
                 }
             }
         },
         {
-            "$out": sup_name_db
+            "$out": group_sup_cc_m_db
         }
     ]
 
     db.excel_data.aggregate(pipeline)
 
 
-# drop_sup_collection
-def drop_sup_collection():
-    c_sup_reg = re.compile('^' + c_sup_prefix)
+# Map customer code name
+def map_customer_code_name():
+    pipeline = [
+        {
+            "$group": {
+                "_id": "$customer_code",
+                "customer_name": {"$first": "$customer_name"}
+            }
+        },
+        {
+            "$out": map_customer_code_name_db
+        }
+    ]
 
-    for c in db.db.list_collection_names():
-        if c_sup_reg.match(c):
-            db.db.drop_collection(c)
+    db.excel_data.aggregate(pipeline)
 
 
-# create new database for processing data
-def create_processing_data_database():
-    for sup in db.db[sup_name_db].find():
-        sup_name = utils.normalize_name(sup.get('_id'))
-        c_name = f'{c_sup_prefix}{sup_name}'
-        db.db[c_name].insert_many(sup.get('items'))
+# Set sup name
+def set_sup_name():
+    pipeline = [
+        {
+            "$group": {
+                "_id": "$sup_name"
+            }
+        },
+        {
+            "$out": set_sup_name_db
+        }
+    ]
+
+    db.excel_data.aggregate(pipeline)
+
+
+# output statistic by month
+# py -m unittest tests/data_processor_test.py
+#
+def export_out1():
+    for data in db.db[group_sup_cc_m_db].find():
+        # pprint.pprint(data)
+        export_month_stats(data)
 
 
 def worker_data_processor():
-    group_by_sup_name()
-    drop_sup_collection()
-    create_processing_data_database()
+    export_out1()

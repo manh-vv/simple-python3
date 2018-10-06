@@ -15,6 +15,10 @@ class MyTestCase(unittest.TestCase):
     # def test_create_processing_data_database(self):
     #     create_processing_data_database()
     #     self.assertEqual(True, True)
+    #
+    # def test_map_customer_code_name(self):
+    #     map_customer_code_name()
+    #     self.assertEqual(True, True)
 
     def test_worker_data_processor(self):
         worker_data_processor()

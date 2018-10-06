@@ -35,6 +35,20 @@ class MyTestCase(unittest.TestCase):
         print(f'---- sub_names: {sup_names}')
         self.assertEqual(True, True)
 
+    def test_customer_code_name_mapping(self):
+        customer_code = 'customer_code_xxx'
+        customer_name = 'customer_name_xxx'
+
+        ccdb = db[map_customer_code_name_db]
+        ccdb.delete_one({'_id': customer_code})
+        ccdb.insert_one({
+            '_id': customer_code,
+            'customer_name': customer_name
+        })
+
+        customer_name_n = customer_code_name_mapping(customer_code)
+        self.assertEqual(customer_name_n, customer_name)
+
 
 if __name__ == '__main__':
     unittest.main()

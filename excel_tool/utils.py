@@ -3,14 +3,31 @@ import os
 from slugify import slugify
 
 
+def delete_file(path):
+    return os.remove(path)
+
+
+def is_file_there(path):
+    return os.path.exists(path)
+
+
 # input folder
 def file_input_path(file_name):
     return f'{os.getcwd()}/resources/input/{file_name}'
 
 
 # output folder
+def make_folder(path):
+    if not is_file_there(path):
+        os.makedirs(path)
+
+
+# output folder
 def file_output_path(file_name):
-    return f'{os.getcwd()}/resources/output/{file_name}'
+    output_folder = f'{os.getcwd()}/resources/output'
+    make_folder(output_folder)
+
+    return f'{output_folder}/{file_name}'
 
 
 # normalize name

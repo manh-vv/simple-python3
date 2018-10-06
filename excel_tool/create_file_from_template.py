@@ -1,25 +1,12 @@
-import os
 from shutil import copyfile
 
-from slugify import slugify
-
-output_folder = f'{os.getcwd()}/resources/output'
-
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
+from excel_tool.utils import file_input_path, file_output_path, normalize_name, make_folder
 
 
-def get_valid_sheet_name(s):
-    return slugify(s)[-30:]
+def create_file_by_sup_name(file_template_name, sup_name, cur_month):
+    file_name = normalize_name(sup_name)
+    make_folder(file_output_path('out1'))
+    _file = file_output_path(f'out1/{cur_month}_{file_name}.xlsx')
 
-
-def get_valid_filename(s):
-    return slugify(s)
-
-
-def create_file_by_sup_name(file_template_path, sup_name, cur_month):
-    file_name = get_valid_filename(sup_name)
-    _file = f'{output_folder}/{cur_month}_{file_name}.xlsx'
-
-    copyfile(file_template_path, _file)
+    copyfile(file_input_path(file_template_name), _file)
     return _file

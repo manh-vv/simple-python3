@@ -36,6 +36,9 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             month_to_num('de')
 
+    def test_is_file_there(self):
+        self.assertEqual(is_file_there(file_input_path("data_book.xlsx")), True)
+
 
 if __name__ == '__main__':
     unittest.main()

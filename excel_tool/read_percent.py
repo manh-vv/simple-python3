@@ -1,5 +1,7 @@
 from openpyxl import load_workbook
 
+from excel_tool.utils import file_input_path
+
 resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 
@@ -65,6 +67,18 @@ def read_percent(file_path):
 
     return sup_group
 
-# test read percent
-# rs = read_percent(f'{input_folder}/phan tram.xlsx')
-# print('rs', rs)
+
+month_percent = read_percent(file_input_path('phan_tram.xlsx'))
+
+
+def find_percent(_sup_name, _cur_month, _customer_code):
+    if _sup_name not in month_percent:
+        return 0
+
+    if _cur_month not in month_percent[_sup_name]:
+        return 0
+
+    if _customer_code not in month_percent[_sup_name][_cur_month]:
+        return 0
+
+    return month_percent[_sup_name][_cur_month][_customer_code]

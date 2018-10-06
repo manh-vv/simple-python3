@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 from excel_tool.excel_read_data_book import read_work_book
+from excel_tool.variables import map_customer_code_name_db
 
 username = urllib.parse.quote_plus('root')
 password = urllib.parse.quote_plus('manhvu@1')
@@ -49,6 +50,15 @@ def query_db(post_id):
 
 def delete_all():
     db.drop_collection(collection_name)
+
+
+def customer_code_name_mapping(customer_code):
+    cc = db[map_customer_code_name_db].find_one({'_id': customer_code})
+
+    if not cc:
+        raise Exception(f'can not find customer code: {customer_code}')
+
+    return cc.get('customer_name')
 
 
 def worker_excel_mongodb(config):

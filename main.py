@@ -1,5 +1,6 @@
 import os
 
+from excel_tool.data_processor import worker_data_processor, map_customer_code_name, set_sup_name, group_by_sup_name
 from excel_tool.excel_mongo_tool import worker_excel_mongodb
 
 
@@ -24,6 +25,9 @@ def import_data_to_mongo(import_new=True):
             'sup_name': 'X',
             'net_sale': 'Q',
             'vat_sale': 'R',
+            'District': 'F',
+            'Region': 'B',
+            'Date': 'S',
         },
 
         'sheet_template_name': 'customer_name'
@@ -37,14 +41,9 @@ if __name__ == '__main__':
 
     import_data_to_mongo()
 
-    # n = 0
-    # agg = quarter_inventory()
-    # for item in agg:
-    #     n += 1
-    #     if n > 2:
-    #         break
-    #
-    #     pprint.pprint(item)
+    map_customer_code_name()
+    set_sup_name()
+    group_by_sup_name()
 
-    # export quarter inventory
-    # execute_export()
+    worker_data_processor()
+    print("===== DONE =====")
