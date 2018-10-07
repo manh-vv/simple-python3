@@ -1,25 +1,20 @@
 import unittest
 
-from excel_tool.data_processor import *
+from excel_tool.data_processor import group_by_sup_name, map_customer_code_name, worker_data_processor
 
 
 class MyTestCase(unittest.TestCase):
-    # def test_group_by_sup_name(self):
-    #     group_by_sup_name()
-    #     self.assertEqual(True, True)
-    #
-    # def test_drop_sup_collection(self):
-    #     drop_sup_collection()
-    #     self.assertEqual(True, True)
-    #
-    # def test_create_processing_data_database(self):
-    #     create_processing_data_database()
-    #     self.assertEqual(True, True)
-    #
-    # def test_map_customer_code_name(self):
-    #     map_customer_code_name()
-    #     self.assertEqual(True, True)
+    @unittest.skip
+    def test_group_by_sup_name(self):
+        group_by_sup_name()
+        self.assertEqual(True, True)
 
+    @unittest.skip
+    def test_map_customer_code_name(self):
+        map_customer_code_name()
+        self.assertEqual(True, True)
+
+    # @unittest.skip
     def test_worker_data_processor(self):
         worker_data_processor()
         self.assertEqual(True, True)

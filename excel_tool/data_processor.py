@@ -1,8 +1,9 @@
 from openpyxl import load_workbook
 
 import excel_tool.excel_mongo_tool as db
-from excel_tool.create_file_from_template import create_file_by_sup_name
+from excel_tool.create_file_from_template import create_file_by_sup_name, create_quarter_by_sup_name
 from excel_tool.export_month_stats import export_month_stats
+from excel_tool.export_quarter_stats import export_quarter_stats
 from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db, template_sheet_name
 
 
@@ -18,6 +19,12 @@ def group_by_sup_name():
                 },
                 "items": {
                     "$push": "$$CURRENT"
+                },
+                "sum_net_sale": {
+                    "$sum": "$net_sale"
+                },
+                "sum_vat_sale": {
+                    "$sum": "$vat_sale"
                 }
             }
         },
@@ -35,7 +42,9 @@ def map_customer_code_name():
         {
             "$group": {
                 "_id": "$customer_code",
-                "customer_name": {"$first": "$customer_name"}
+                "customer_name": {"$first": "$customer_name"},
+                "Region": {"$first": "$Region"},
+                "District": {"$first": "$District"}
             }
         },
         {
@@ -94,5 +103,53 @@ def export_out1(month):
         current_book.save(new_file)
 
 
+# output statistic by month
+# py -m unittest tests/data_processor_test.py
+#
+def export_incentive():
+    print('Create quarter statistic by sup_name')
+    collection_sup_data = db.db[group_sup_cc_m_db]
+
+    data = collection_sup_data.aggregate([
+        {
+            "$addFields": {
+                "sup_name": "$_id.sup_name",
+                "month": "$_id.month",
+                "customer_code": "$_id.customer_code",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "sup_name": 1,
+                "month": 1,
+                "customer_code": 1,
+                "sum_net_sale": 1,
+                "sum_vat_sale": 1
+            }
+        },
+        {
+            "$group": {
+                "_id": "$sup_name",
+                "items": {
+                    "$push": "$$CURRENT"
+                }
+            }
+        }
+    ])
+
+    for sup in list(data):
+        sup_name = sup.get("_id")
+        print(f'create new quarter file: sup_name={sup_name}')
+        new_file = create_quarter_by_sup_name("template_incentive.xlsx", sup_name)
+        current_book = load_workbook(filename=new_file)
+
+        export_quarter_stats(current_book, sup.get('items'))
+
+        current_book.remove(current_book[template_sheet_name])
+        current_book.save(new_file)
+
+
 def worker_data_processor():
-    export_out1('Sep')
+    # export_out1('Sep')
+    export_incentive()
