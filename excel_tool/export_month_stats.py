@@ -27,14 +27,17 @@ def export_month_stats(sup_name, cur_month, data, current_book):
     c_sheet[percent_col] = find_percent(sup_name, cur_month, customer_code)
 
     # then fill related values to the sheet
-    # we will fill from row 5
+    # we will fill from row 5 then last_row_index = available_rows + 5 - 1
+    # because insert_rows will insert row before row_idx, we need to insert row at (last_row_index - 1)
     # need inserting more rows
     will_fill_row_count = len(items)
-    # print(f'customer_name={customer_name} have {will_fill_row_count} items')
     if will_fill_row_count > available_rows:
-        c_sheet.insert_rows(available_rows - 2, will_fill_row_count - available_rows + 5)
+        print(f'customer_code={customer_code} have {will_fill_row_count} '
+              f'items --> insert {will_fill_row_count - available_rows} rows more')
+        last_row_index = available_rows + template_description['row_start'] - 1
+        c_sheet.insert_rows(last_row_index - 1, will_fill_row_count - available_rows)
 
-    row_index = 5
+    row_index = template_description['row_start']
     for item in items:
         c_sheet[f'B{row_index}'] = item.get('Region')  # Khu Vực
         c_sheet[f'C{row_index}'] = item.get('District')  # Tỉnh/Thành
@@ -44,4 +47,4 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         c_sheet[f'H{row_index}'] = item.get('net_sale')  # Doanh số
         c_sheet[f'I{row_index}'] = item.get('vat_sale')  # Thuế VAT
 
-        row_index = row_index + 1
+        row_index += 1

@@ -7,6 +7,7 @@ template_description = {
     'template_sheet_name': 'customer_name',
     'sheet_title_col': 'A1',
     'percent_col': 'G46',
+    'row_start': 5,
     'available_rows': 40,
 }
 
