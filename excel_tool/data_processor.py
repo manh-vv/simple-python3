@@ -148,8 +148,3 @@ def export_incentive():
 
         current_book.remove(current_book[template_sheet_name])
         current_book.save(new_file)
-
-
-def worker_data_processor():
-    # export_out1('Sep')
-    export_incentive()

@@ -8,3 +8,35 @@ percent_col = 'G46'
 
 # available rows in template now is 40
 available_rows = 40
+
+# Input
+data_input = {
+    'import_new': True,
+    'data_file_name': 'data_book2.xlsx',
+    'data_range': ('A', 2, 1637),
+    'sheet_name': 'Sheet1',
+    'data_col': {
+        'month': 'A',
+        'customer_code': 'C',
+        'customer_name': 'D',
+        'sup_name': 'X',
+        'net_sale': 'Q',
+        'vat_sale': 'R',
+        'District': 'F',
+        'Region': 'B',
+        'Date': 'S',
+    },
+    'sheet_template_name': 'customer_name',
+    'percent_file_name': 'phan_tram_10.xlsx',
+    'working_months': [
+        ('oct', 'H')
+    ],
+    'percent_file_des': {
+        'row_data_start': 2,
+        'row_data_end': 58,
+        'col_sup_name': 'D',
+        'col_customer_code': 'B',
+    },
+    'current_month': 'Oct',
+    'enable_export_incentive': False
+}

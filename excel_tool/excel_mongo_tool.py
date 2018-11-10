@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 from excel_tool.excel_read_data_book import read_work_book
+from excel_tool.utils import file_input_path
 from excel_tool.variables import map_customer_code_name_db
 
 username = urllib.parse.quote_plus('root')
@@ -70,7 +71,7 @@ def worker_excel_mongodb(config):
     delete_all()
 
     # read config
-    file_path = config['file_path']
+    file_path = file_input_path(config['data_file_name'])
     data_range = config['data_range']
     sheet_name = config['sheet_name']
     data_col = config['data_col']

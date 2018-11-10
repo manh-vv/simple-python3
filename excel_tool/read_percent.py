@@ -1,13 +1,12 @@
 from openpyxl import load_workbook
 
 from excel_tool.utils import file_input_path
+from excel_tool.variables import data_input
 
 resource_folder = '../resources'
 input_folder = f'{resource_folder}/input'
 
-working_months = [
-    ('sep', 'H')
-]
+working_months = data_input['working_months']
 
 
 # read incentive and update data in memory
@@ -18,11 +17,12 @@ working_months = [
 def read_percent(file_path):
     sup_group = dict()
 
-    col_sup_name = 'D'
-    col_customer_code = 'B'
+    percent_file_des = data_input['percent_file_des']
+    col_sup_name = percent_file_des['col_sup_name']
+    col_customer_code = percent_file_des['col_customer_code']
 
-    row_data_start = 2
-    row_data_end = 87
+    row_data_start = percent_file_des['row_data_start']
+    row_data_end = percent_file_des['row_data_end']
 
     incentive_wb = load_workbook(file_path, data_only=True)
     sheet_ranges = incentive_wb['Sheet1']
@@ -69,7 +69,7 @@ def read_percent(file_path):
     return sup_group
 
 
-month_percent = read_percent(file_input_path('phan_tram_9.xlsx'))
+month_percent = read_percent(file_input_path(data_input['percent_file_name']))
 
 
 def find_percent(_sup_name, _cur_month, _customer_code):
