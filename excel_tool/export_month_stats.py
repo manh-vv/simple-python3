@@ -45,7 +45,7 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         print(f'customer_code={customer_code} have {will_fill_row_count} '
               f'items --> insert {will_fill_row_count - available_rows} rows more')
         last_row_index = available_rows + row_start - 1
-        c_sheet.insert_rows(last_row_index - 1, will_fill_row_count - available_rows)
+        c_sheet.insert_rows(last_row_index + 1, will_fill_row_count - available_rows)
 
     row_index = row_start
     for item in items:
