@@ -7,6 +7,7 @@ from excel_tool.variables import template_description
 def export_month_stats(sup_name, cur_month, data, current_book):
     template_sheet_name = template_description['template_sheet_name']
     sheet_title_col = template_description['sheet_title_col']
+    inventory_num_col = template_description['inventory_num_col']
     percent_col = template_description['percent_col']
     available_rows = template_description['available_rows']
     row_start = template_description['row_start']
@@ -26,6 +27,14 @@ def export_month_stats(sup_name, cur_month, data, current_book):
     month_num = month_to_num(cur_month)
     c_sheet[sheet_title_col] = f'Bảng kê chi tiết doanh số, chiết khấu thương mại Tháng {month_num}.2018'
     c_sheet[percent_col] = find_percent(sup_name, cur_month, customer_code)
+
+    inventory_num_prefix = c_sheet[inventory_num_col].value
+    if not inventory_num_prefix:
+        inventory_num_prefix = template_description['inventory_num_prefix']
+    else:
+        inventory_num_prefix = inventory_num_prefix.strip()
+
+    c_sheet[inventory_num_col] = f'{inventory_num_prefix}{customer_code}'
 
     # then fill related values to the sheet
     # we will fill from row 5 then last_row_index = available_rows + 5 - 1

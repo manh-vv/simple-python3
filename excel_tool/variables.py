@@ -6,6 +6,8 @@ map_customer_code_name_db = 'c_map_customer_code_name'
 template_description = {
     'template_sheet_name': 'customer_name',
     'sheet_title_col': 'A1',
+    'inventory_num_col': 'B2',
+    'inventory_num_prefix': '1018HCM-',  # tobe updated
     'percent_col': 'G46',
     'row_start': 5,
     'available_rows': 40,
