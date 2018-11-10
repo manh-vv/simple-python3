@@ -1,10 +1,15 @@
 from excel_tool.excel_mongo_tool import customer_code_name_mapping
 from excel_tool.read_percent import find_percent
 from excel_tool.utils import normalize_name, month_to_num
-from excel_tool.variables import template_sheet_name, sheet_title_col, percent_col, available_rows
+from excel_tool.variables import template_description
 
 
 def export_month_stats(sup_name, cur_month, data, current_book):
+    template_sheet_name = template_description['template_sheet_name']
+    sheet_title_col = template_description['sheet_title_col']
+    percent_col = template_description['percent_col']
+    available_rows = template_description['available_rows']
+
     _id = data.get('_id')
     items = data.get('items')
 

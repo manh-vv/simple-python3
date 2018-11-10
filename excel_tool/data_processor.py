@@ -4,7 +4,7 @@ import excel_tool.excel_mongo_tool as db
 from excel_tool.create_file_from_template import create_file_by_sup_name, create_quarter_by_sup_name
 from excel_tool.export_month_stats import export_month_stats
 from excel_tool.export_quarter_stats import export_quarter_stats
-from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db, template_sheet_name
+from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db, template_description
 
 
 # Group by sup name
@@ -99,7 +99,7 @@ def export_out1(month):
         for month_sup_name_item in all_month_sup_name_item:
             export_month_stats(sup_name, cur_month, month_sup_name_item, current_book)
 
-        current_book.remove(current_book[template_sheet_name])
+        current_book.remove(current_book[template_description['template_sheet_name']])
         current_book.save(new_file)
 
 
@@ -146,5 +146,5 @@ def export_incentive():
 
         export_quarter_stats(current_book, sup.get('items'))
 
-        current_book.remove(current_book[template_sheet_name])
+        current_book.remove(current_book[template_description['template_sheet_name']])
         current_book.save(new_file)

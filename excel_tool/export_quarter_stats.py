@@ -1,6 +1,6 @@
 from excel_tool.excel_mongo_tool import customer_code_name_mapping, db
 from excel_tool.utils import normalize_name, month_to_num
-from excel_tool.variables import template_sheet_name, map_customer_code_name_db
+from excel_tool.variables import template_description, map_customer_code_name_db
 
 
 def export_quarter_stats(current_book, items):
@@ -19,7 +19,7 @@ def export_quarter_stats(current_book, items):
 
         # create new sheet for customer name
         customer_name = customer_code_name_mapping(customer_code)
-        work_sheet_source = current_book[template_sheet_name]
+        work_sheet_source = current_book[template_description['template_sheet_name']]
         c_sheet = current_book.copy_worksheet(work_sheet_source)
         c_sheet.title = normalize_name(customer_name, 30)
 
