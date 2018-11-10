@@ -77,7 +77,7 @@ def worker_excel_mongodb(config):
     data_col = config['data_col']
 
     # prepare document
-    def row_reader(work_sheet, row_idx):
+    def row_reader(work_sheet, row_idx, row_count):
         obj = {}
         for name, col_name in data_col.items():
             obj[name] = work_sheet[f'{col_name}{row_idx}'].value
@@ -86,6 +86,10 @@ def worker_excel_mongodb(config):
 
         # insert document to mongodb
         insert_into_db(obj)
+
+        # print status
+        if row_count % 100 == 0:
+            print(f'-- inserted {row_count} into db')
 
     # read excel file
     print('transferring data from excel to mongodb')
