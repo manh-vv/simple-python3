@@ -9,6 +9,7 @@ def export_month_stats(sup_name, cur_month, data, current_book):
     sheet_title_col = template_description['sheet_title_col']
     percent_col = template_description['percent_col']
     available_rows = template_description['available_rows']
+    row_start = template_description['row_start']
 
     _id = data.get('_id')
     items = data.get('items')
@@ -34,10 +35,10 @@ def export_month_stats(sup_name, cur_month, data, current_book):
     if will_fill_row_count > available_rows:
         print(f'customer_code={customer_code} have {will_fill_row_count} '
               f'items --> insert {will_fill_row_count - available_rows} rows more')
-        last_row_index = available_rows + template_description['row_start'] - 1
+        last_row_index = available_rows + row_start - 1
         c_sheet.insert_rows(last_row_index - 1, will_fill_row_count - available_rows)
 
-    row_index = template_description['row_start']
+    row_index = row_start
     for item in items:
         c_sheet[f'B{row_index}'] = item.get('Region')  # Khu Vực
         c_sheet[f'C{row_index}'] = item.get('District')  # Tỉnh/Thành
@@ -48,3 +49,12 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         c_sheet[f'I{row_index}'] = item.get('vat_sale')  # Thuế VAT
 
         row_index += 1
+
+    if will_fill_row_count > available_rows:
+        # update sum
+        c_sheet[f'H{row_index}'] = f'=SUM(H{row_start}:H{row_index - 1})'
+        c_sheet[f'I{row_index}'] = f'=SUM(I{row_start}:I{row_index - 1})'
+
+        # update percent
+        c_sheet[f'H{row_index + 1}'] = f'=G{row_index + 1} * H{row_index}'
+        c_sheet[f'I{row_index + 1}'] = f'=H{row_index + 1} * 10%'
