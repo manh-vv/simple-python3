@@ -55,6 +55,7 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         last_row_index = will_fill_row_count + row_start - 1
         c_sheet.delete_rows(last_row_index + 1, available_rows - will_fill_row_count)
 
+    row_count = 0
     row_index = row_start
     for item in items:
         c_sheet[f'B{row_index}'] = item.get('Region')  # Khu Vực
@@ -64,6 +65,10 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         c_sheet[f'G{row_index}'] = item.get('Date')  # Ngày hóa đơn
         c_sheet[f'H{row_index}'] = item.get('net_sale')  # Doanh số
         c_sheet[f'I{row_index}'] = item.get('vat_sale')  # Thuế VAT
+
+        row_count += 1
+        if row_count > available_rows:
+            c_sheet[f'A{row_index}'] = row_count
 
         row_index += 1
 
