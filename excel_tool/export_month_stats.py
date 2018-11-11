@@ -36,6 +36,9 @@ def export_month_stats(sup_name, cur_month, data, current_book):
 
     c_sheet[inventory_num_col] = f'{inventory_num_prefix}{customer_code}'
 
+    # filter items
+    items = [item for item in items if item.get('net_sale') != 0]
+
     # then fill related values to the sheet
     # we will fill from row 5 then last_row_index = available_rows + 5 - 1
     # because insert_rows will insert row before row_idx, we need to insert row at (last_row_index - 1)
@@ -46,6 +49,11 @@ def export_month_stats(sup_name, cur_month, data, current_book):
               f'items --> insert {will_fill_row_count - available_rows} rows more')
         last_row_index = available_rows + row_start - 1
         c_sheet.insert_rows(last_row_index + 1, will_fill_row_count - available_rows)
+    elif will_fill_row_count < available_rows:
+        # print(f'customer_code={customer_code} have {will_fill_row_count} '
+        #       f'items --> delete {available_rows - will_fill_row_count} rows')
+        last_row_index = will_fill_row_count + row_start - 1
+        c_sheet.delete_rows(last_row_index + 1, available_rows - will_fill_row_count)
 
     row_index = row_start
     for item in items:
@@ -59,7 +67,7 @@ def export_month_stats(sup_name, cur_month, data, current_book):
 
         row_index += 1
 
-    if will_fill_row_count > available_rows:
+    if will_fill_row_count != available_rows:
         # update sum
         c_sheet[f'H{row_index}'] = f'=SUM(H{row_start}:H{row_index - 1})'
         c_sheet[f'I{row_index}'] = f'=SUM(I{row_start}:I{row_index - 1})'
