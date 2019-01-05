@@ -1,6 +1,6 @@
 from excel_tool.excel_mongo_tool import customer_code_name_mapping, db
 from excel_tool.utils import normalize_name, month_to_num
-from excel_tool.variables import template_description, map_customer_code_name_db
+from excel_tool.variables import template_description, map_customer_code_name_db, data_input
 
 
 def export_quarter_stats(current_book, items):
@@ -34,9 +34,9 @@ def export_quarter_stats(current_book, items):
             c_sheet[f'E{idx}'] = cc.get('customer_name')
 
         for month, m_item in month_items.items():
-            if month_to_num(month) == 7:
+            if month_to_num(month) == data_input['quarter_month_start']:
                 c_sheet['H5'] = m_item.get('sum_net_sale')
-            if month_to_num(month) == 8:
+            if month_to_num(month) == (data_input['quarter_month_start'] + 1):
                 c_sheet['H6'] = m_item.get('sum_net_sale')
-            if month_to_num(month) == 9:
+            if month_to_num(month) == (data_input['quarter_month_start'] + 2):
                 c_sheet['H7'] = m_item.get('sum_net_sale')

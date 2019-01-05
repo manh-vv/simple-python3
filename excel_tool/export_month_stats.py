@@ -64,7 +64,7 @@ def export_month_stats(sup_name, cur_month, data, current_book):
         c_sheet[f'E{row_index}'] = item.get('customer_name')  # Tên khách hàng
         c_sheet[f'G{row_index}'] = item.get('Date')  # Ngày hóa đơn
         c_sheet[f'H{row_index}'] = item.get('net_sale')  # Doanh số
-        c_sheet[f'I{row_index}'] = item.get('vat_sale')  # Thuế VAT
+        # c_sheet[f'I{row_index}'] = item.get('vat_sale')  # Thuế VAT
 
         row_count += 1
         if row_count > available_rows:
