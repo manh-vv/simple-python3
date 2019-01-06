@@ -4,7 +4,8 @@ import excel_tool.excel_mongo_tool as db
 from excel_tool.create_file_from_template import create_file_by_sup_name, create_quarter_by_sup_name
 from excel_tool.export_month_stats import export_month_stats
 from excel_tool.export_quarter_stats import export_quarter_stats
-from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db, template_description
+from excel_tool.variables import group_sup_cc_m_db, map_customer_code_name_db, set_sup_name_db, template_description, \
+    c_group_by_year
 
 
 # Group by sup name
@@ -30,6 +31,34 @@ def group_by_sup_name():
         },
         {
             "$out": group_sup_cc_m_db
+        }
+    ]
+
+    db.excel_data.aggregate(pipeline)
+
+
+# Group by sup name
+def group_by_year():
+    pipeline = [
+        {
+            "$group": {
+                "_id": {
+                    "sup_name": "$sup_name",
+                    "customer_code": "$customer_code"
+                },
+                "items": {
+                    "$push": "$$CURRENT"
+                },
+                "sum_net_sale": {
+                    "$sum": "$net_sale"
+                },
+                "sum_vat_sale": {
+                    "$sum": "$vat_sale"
+                }
+            }
+        },
+        {
+            "$out": c_group_by_year
         }
     ]
 
