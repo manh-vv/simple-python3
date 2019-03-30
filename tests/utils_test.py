@@ -36,6 +36,23 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             month_to_num('de')
 
+    def test_month_num(self):
+        self.assertEqual(num_to_month(1), 'Jan')
+        self.assertEqual(num_to_month(2), 'Feb')
+        self.assertEqual(num_to_month(3), 'Mar')
+        self.assertEqual(num_to_month(4), 'Apr')
+        self.assertEqual(num_to_month(5), 'May')
+        self.assertEqual(num_to_month(6), 'Jun')
+        self.assertEqual(num_to_month(7), 'Jul')
+        self.assertEqual(num_to_month(8), 'Aug')
+        self.assertEqual(num_to_month(9), 'Sep')
+        self.assertEqual(num_to_month(10), 'Oct')
+        self.assertEqual(num_to_month(11), 'Nov')
+        self.assertEqual(num_to_month(12), 'Dec')
+
+        with self.assertRaises(Exception):
+            num_to_month(0)
+
     def test_is_file_there(self):
         self.assertEqual(is_file_there(file_input_path("data_book.xlsx")), True)
 

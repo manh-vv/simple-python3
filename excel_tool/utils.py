@@ -1,6 +1,6 @@
 import os
-
 from slugify import slugify
+from excel_tool.MonthEnum import MonthEnum
 
 
 def delete_file(path):
@@ -37,31 +37,17 @@ def normalize_name(s, length=256):
 
 # month name
 def month_to_num(month_name):
-    month_name = month_name.lower()
-
-    if month_name == 'jan':
-        return 1
-    if month_name == 'feb':
-        return 2
-    if month_name == 'mar':
-        return 3
-    if month_name == 'apr':
-        return 4
-    if month_name == 'may':
-        return 5
-    if month_name == 'jun':
-        return 6
-    if month_name == 'jul':
-        return 7
-    if month_name == 'aug':
-        return 8
-    if month_name == 'sep':
-        return 9
-    if month_name == 'oct':
-        return 10
-    if month_name == 'nov':
-        return 11
-    if month_name == 'dec':
-        return 12
+    month_name = month_name.capitalize()
+    month_enum = MonthEnum[month_name]
+    if month_enum:
+        return month_enum.value
 
     raise Exception(f'month name [{month_name}] does not exist')
+
+# month num
+def num_to_month(month_num):
+    month_enum = MonthEnum(month_num)
+    if month_enum:
+        return month_enum.name
+
+    raise Exception(f'month num [{month_num}] does not exist')

@@ -1,13 +1,16 @@
 from excel_tool.excel_mongo_tool import customer_code_name_mapping
 from excel_tool.read_percent import find_percent
 from excel_tool.utils import normalize_name, month_to_num
-from excel_tool.variables import template_description
+from excel_tool.variables import template_description, sheet_title_text
 
 
 def export_month_stats(sup_name, cur_month, data, current_book):
     template_sheet_name = template_description['template_sheet_name']
     sheet_title_col = template_description['sheet_title_col']
     inventory_num_col = template_description['inventory_num_col']
+    inventory_num_col2 = template_description['inventory_num_col2']
+    inventory_num_prefix = template_description['inventory_num_prefix']
+    inventory_num_prefix2 = template_description['inventory_num_prefix2']
     percent_col = template_description['percent_col']
     available_rows = template_description['available_rows']
     row_start = template_description['row_start']
@@ -25,16 +28,11 @@ def export_month_stats(sup_name, cur_month, data, current_book):
 
     # fill value to sheet title
     month_num = month_to_num(cur_month)
-    c_sheet[sheet_title_col] = f'Bảng kê chi tiết doanh số, chiết khấu thương mại Tháng {month_num}.2018'
+    c_sheet[sheet_title_col] = sheet_title_text(month_num)
     c_sheet[percent_col] = find_percent(sup_name, cur_month, customer_code)
 
-    inventory_num_prefix = c_sheet[inventory_num_col].value
-    if not inventory_num_prefix:
-        inventory_num_prefix = template_description['inventory_num_prefix']
-    else:
-        inventory_num_prefix = inventory_num_prefix.strip()
-
     c_sheet[inventory_num_col] = f'{inventory_num_prefix}{customer_code}'
+    c_sheet[inventory_num_col2] = f'{inventory_num_prefix2}'
 
     # filter items
     items = [item for item in items if item.get('net_sale') != 0]
