@@ -7,7 +7,7 @@ set_sup_name_db = 'c_set_sup_name'
 map_customer_code_name_db = 'c_map_customer_code_name'
 
 # current working month
-month_enum = MonthEnum.Feb # to be updated
+month_enum = MonthEnum.Mar # to be updated
 # current year
 current_year = '2019' # to be updated
 
@@ -30,8 +30,8 @@ template_description = {
 # Input
 data_input = {
     'import_new': False, # to be updated
-    'data_file_name': 'data_book2.xlsx', # to be updated
-    'data_range': ('A', 2, 4311), # to be updated
+    'data_file_name': 'data_book.xlsx', # to be updated
+    'data_range': ('A', 2, 6621), # to be updated
     'sheet_name': 'Sheet1',
     'data_col': {
         'month': 'A',
@@ -50,11 +50,11 @@ data_input = {
     ],
     'percent_file_des': {
         'row_data_start': 2, # to be updated
-        'row_data_end': 71, # to be updated
+        'row_data_end': 74, # to be updated
         'col_sup_name': 'E',
         'col_customer_code': 'B',
     },
     'current_month': month_enum.name,
-    'enable_export_incentive': False, # to be updated
+    'enable_export_incentive': True, # to be updated
     'quarter_month_start': 1,  # to be updated
 }
